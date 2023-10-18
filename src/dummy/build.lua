@@ -2,7 +2,7 @@
 -- Arguments
 -- 1) Name of the project used in the visual studio solution
 -- 2) Output name of the project (name of the exe / lib)
-mox_project("HelloWorld", "hello_world")
+mox_project("Dummy")
 
 -- This line selects the programming language 
 -- Options
