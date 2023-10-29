@@ -42,7 +42,7 @@ cmox_src_folder = "src"
 -- "manual"         Projects are not loaded by the MoxPP
 --                  provide the "cmox_function_includeprojects"
 --                  function.
-cmox_project_architecture = "flat" 
+cmox_project_architecture = "manual" 
 
 -- MACRO PREFIX
 -- This will be prepended to ALL non default macros
@@ -64,6 +64,18 @@ cmox_macro_prefix = "BL2D_"
 -- This function is called in manual configuration to include 
 -- the project
 -- use: include "my-build-file.lua"
--- function cmox_function_includeprojects()
---     ...
--- end
+function cmox_function_includeprojects()
+    include "../scripts/boundless2d.lua"
+
+    -- Modules 
+    group "Modules"
+    bl2d_include_folder("bl2d/modules")
+    
+    -- Common Code (Util, Config, API)
+    group "Common"
+    bl2d_include_folder("bl2d/common")
+
+    -- Application
+    group "App"
+    bl2d_include_folder("bl2d/app")
+end
