@@ -21,6 +21,20 @@ function bl2d_project(name)
     -- Basic setup
     mox_project(name)
     mox_cpp("C++20")
+
+    -- Custom include paths
+    includedirs {
+        "%{wks.location}/" .. cmox_src_folder .. "/bl2d/common/api/",
+        "%{wks.location}/" .. cmox_src_folder .. "/bl2d/modules/",
+    }
+    
+    -- Project type
+    filter { "configurations:Debug*" }
+        defines { cmox_macro_prefix .. "CONSOLE_APP" }
+    filter {}
+    filter { "configurations:not Debug*" }
+        defines { cmox_macro_prefix .. "WINDOWED_APP" }
+    filter {}
 end
 
 function bl2d_headers(name)
