@@ -4,11 +4,13 @@
 #include <bl2d/common/ioc/IoCRegistrations.h>
 
 #include <i.bl2d.dummy/IDummy.h>
-#include <bl2d.dummy/Dummy.h>
+
+#include <bl2d.dummy/bl2d.dummy.h>
 
 int main()
 {
-    bl2d::IoCRegistrations::Get().Register<bl2d::dummy::IDummy, bl2d::dummy::Dummy>();
+    bl2d::modules::bl2d_dummy modDummy;
+    modDummy.Register(bl2d::IoCRegistrations::Get());
 
     bl2d::IoCStack stack;
 

@@ -15,6 +15,33 @@ function bl2d_include_folder(name)
     end
 end
 
+-- File generation functions
+
+function replace_pattern(content, patterns)
+    for k,v in pairs(patterns) 
+    do
+        content = string.gsub(content, "<<" .. k .. ">>", v)
+    end
+
+    return content
+end
+
+function generate_file(outfile, template, patterns)
+    content = io.readfile(template)
+    content = replace_pattern(content, patterns)
+    io.writefile(outfile, content)
+end
+
+function generate_module_h_or_cpp_ondemand(name, ending) 
+    local f = "./" .. name .. "." .. ending;
+    if os.isfile(f) == false then
+        patterns = {}
+        patterns["name_dt"] = name
+        patterns["name_us"] = string.gsub(name, "%.", "_")
+        generate_file(f, "../../../../templates/lua_module/module." .. ending, patterns)
+    end
+end
+
 -- Project template function
 
 function bl2d_project(name)
@@ -62,6 +89,10 @@ function bl2d_module(name)
 
     -- Produce module
     table.insert(BUILD_MODULES, name)
+
+    -- Generate module main files
+    generate_module_h_or_cpp_ondemand(name, "h")
+    generate_module_h_or_cpp_ondemand(name, "cpp")
 end
 
 function bl2d_application(name)
