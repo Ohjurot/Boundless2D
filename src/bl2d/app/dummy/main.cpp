@@ -2,6 +2,7 @@
 
 #include <bl2d/common/ioc/IoCStack.h>
 #include <bl2d/common/ioc/IoCRegistrations.h>
+#include <bl2d/common/msys/ModuleManager.h>
 
 #include <i.bl2d.dummy/IDummy.h>
 
@@ -9,19 +10,17 @@
 
 int main()
 {
-    bl2d::modules::bl2d_dummy modDummy;
-    modDummy.Register(bl2d::IoCRegistrations::Get());
+    // Register module and debug print
+    bl2d::RegisterAllModules();
+    for (size_t i = 0; i < bl2d::ModuleManager::Get().GetModuleCount(); i++)
+        spdlog::info("Module: {} ({})", 
+            bl2d::ModuleManager::Get().GetModuleDetail(i)->displayName, 
+            bl2d::ModuleManager::Get().GetModuleDetail(i)->packageName
+        );
 
+    // Module demo
     bl2d::IoCStack stack;
-
-    auto* myDummy1 = &stack.Get<bl2d::dummy::IDummy>();
-    auto* myDummy2 = &stack.Get<bl2d::dummy::IDummy>();
-    auto* myDummy3 = &stack.Get<bl2d::dummy::IDummy>();
-    myDummy1->SayHello();
-
+    auto* dmy = &stack.Get<bl2d::dummy::IDummy>();
+    dmy->SayHello();
     stack.Clear();
-
-    // We will use spdlog to say hello! 
-    // So that you can see that conan works :-)
-    spdlog::warn("Hello World!");
 }

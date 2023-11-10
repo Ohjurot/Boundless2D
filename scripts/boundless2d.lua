@@ -42,6 +42,25 @@ function generate_module_h_or_cpp_ondemand(name, ending)
     end
 end
 
+function generate_register_modules(modules) 
+    local includes = ""
+    local regcalls = ""
+    
+    for i,v in ipairs(modules)
+    do
+        includes = includes .. 
+            "#include <" .. v .. "/" .. v .. ".h>" .. "\n"
+        regcalls = regcalls .. 
+            "    ::bl2d::ModuleManager::Get().Register<bl2d::modules::" .. v:gsub("%.", "_") .. ">();" .. "\n"
+    end
+
+    local patterns = {}
+    patterns["module_includes"] = includes
+    patterns["module_regcalls"] = regcalls
+
+    generate_file("./register_modules.cpp", "../../../../templates/lua_module/register_modules.cpp", patterns)
+end
+
 -- Project template function
 
 function bl2d_project(name)
@@ -109,4 +128,7 @@ function bl2d_application(name)
     -- Consume common and modules
     links(BUILD_LIBS)
     links(BUILD_MODULES)
+    
+    -- Generate a modules file
+    generate_register_modules(BUILD_MODULES)
 end
