@@ -61,6 +61,21 @@ function generate_register_modules(modules)
     generate_file("./register_modules.cpp", "../../../../templates/lua_module/register_modules.cpp", patterns)
 end
 
+function generate_file_ondemand(template, patterns, out) 
+    if os.isfile(out) == false then
+        generate_file(out, template, patterns)
+    end
+end
+
+function generate_app_files(name)
+    patterns = {}
+    patterns["app_name"] = name
+    
+    generate_file_ondemand("../../../../templates/lua_app/main.cpp", patterns, "./main.cpp")
+    generate_file_ondemand("../../../../templates/lua_app/app.h", patterns, "./" .. name .. ".h")
+    generate_file_ondemand("../../../../templates/lua_app/app.cpp", patterns, "./" .. name .. ".cpp")
+end
+
 -- Project template function
 
 function bl2d_project(name)
@@ -81,6 +96,11 @@ function bl2d_project(name)
     filter { "configurations:not Debug*" }
         defines { cmox_macro_prefix .. "WINDOWED_APP" }
     filter {}
+
+    -- Silence
+    defines {
+        "_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING"
+    }
 end
 
 function bl2d_headers(name)
@@ -114,15 +134,23 @@ function bl2d_module(name)
     generate_module_h_or_cpp_ondemand(name, "cpp")
 end
 
+function bl2d_console()
+    mox_console()
+end
+
+function bl2d_windowed()
+    mox_windowed()
+end
+
 function bl2d_application(name)
     bl2d_project(name)
 
     -- Project Type
     filter { "configurations:Debug*" }
-        mox_console()
+        bl2d_console()
     filter {}
     filter { "configurations:not Debug*" }
-        mox_windowed()
+        bl2d_windowed()
     filter {}
 
     -- Consume common and modules
@@ -131,4 +159,5 @@ function bl2d_application(name)
     
     -- Generate a modules file
     generate_register_modules(BUILD_MODULES)
+    generate_app_files(name)
 end
