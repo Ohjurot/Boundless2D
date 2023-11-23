@@ -18,6 +18,13 @@ const bl2d::ModuleDescription* bl2d::ModuleManager::GetModuleDetail(const std::s
     return nullptr;
 }
 
+bl2d::IModule* bl2d::ModuleManager::GetModulePtr(size_t index) const
+{
+    auto it = m_modules.begin();
+    for (size_t i = 0; i < index; i++) ++it;
+    return it->second.get();
+}
+
 const bl2d::ModuleDescription* bl2d::ModuleManager::GetModuleDetail(size_t index) const
 {
     auto it = m_modules.begin();

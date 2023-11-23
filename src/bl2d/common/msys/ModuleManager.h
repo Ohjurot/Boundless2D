@@ -53,6 +53,13 @@ namespace bl2d
             const ModuleDescription* GetModuleDetail(size_t index) const;
 
             /*!
+             * @brief Retrives a pointer to the module itself
+             * @param index Index of module 
+             * @return Pointer 
+            */
+            IModule* GetModulePtr(size_t index) const;
+
+            /*!
              * @brief Counts the number of registered modules
              * @return Module count
             */

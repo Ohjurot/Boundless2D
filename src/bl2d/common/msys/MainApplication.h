@@ -5,12 +5,14 @@
 #include <bl2d/common/msys/ModuleManager.h>
 #include <bl2d/common/msys/MainApplicationArguments.h>
 
+#include <i.bl2d.platform/ISystemPlatform.h>
+
 namespace bl2d
 {
     /*!
      * @brief Base class for applications.
      *
-     * IoC and msys powerded!
+     * IoC and msys powered!
     */
     class MainApplication
     {
@@ -35,17 +37,17 @@ namespace bl2d
              * @brief Called after all modules are loaded and ready during application load
              * 
              * Allowed: App --> Object; App --> Module
-             * (after modules OnInit(..))
+             * (before modules OnInit(..))
             */
-            virtual void OnInit() {};
+            virtual void OnInit();
 
             /*!
              * @brief Called before objects are destroyed during shutdown
              * 
              * Allowed: App --> Object; App --> Module
-             * (before modules OnShutdown(..)) 
+             * (after modules OnShutdown(..)) 
             */
-            virtual void OnShutdown() {};
+            virtual void OnShutdown();
 
             /*!
              * @brief Called after all modules are unloaded

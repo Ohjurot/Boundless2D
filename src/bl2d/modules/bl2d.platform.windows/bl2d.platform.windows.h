@@ -4,7 +4,7 @@
 
 namespace bl2d::modules
 {
-    class bl2d_dummy : public IModule
+    class bl2d_platform_windows : public IModule
     {
         public:
             const ModuleDescription& GetDesc() const override;

@@ -1,4 +1,4 @@
 #include <bl2d/common/boot/boot.h>
-#include "DummyApp.h"
+#include "dummy.h"
 
-BL2D_BOOT_APP(DummyApp);
+BL2D_BOOT_APP(dummy);

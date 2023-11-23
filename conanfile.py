@@ -6,6 +6,7 @@ class Boundless2DRecipe(ConanFile):
 
     def requirements(self):
         self.requires("spdlog/1.12.0")
+        self.requires("fmt/10.0.0")
 
     def configure(self):
         if self.settings.os == "Windows":
