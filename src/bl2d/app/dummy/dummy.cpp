@@ -23,9 +23,5 @@ int dummy::Run(const IMainApplicationArguments& args)
     const auto& platformInfo = ioc.Get<bl2d::platform::ISystemPlatform>().GetInfo();
     spdlog::info("Running on {} (Version: {})", platformInfo.name, platformInfo.version);
 
-    // Exception
-    auto ex = BL2D_BUILD_EXCEPTION("Example").Build();
-    ex.LogMessage(*spdlog::default_logger());
-
     return 0;
 }

@@ -22,8 +22,15 @@ namespace bl2d::boot
     template<typename T>
     int TCHAR_MAIN(::bl2d::MainApplication& app, int argc, T** argv)
     {
+        int rc = -1;
+
         ::bl2d::MainApplicationArguments<T> args(argc, argv);
-        return app.Run(args);
+        if (app.IsInitialized())
+        {
+            rc = app.RunSafe(args);
+        }
+
+        return rc;
     }
 }
 

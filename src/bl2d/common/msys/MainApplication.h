@@ -5,6 +5,8 @@
 #include <bl2d/common/msys/ModuleManager.h>
 #include <bl2d/common/msys/MainApplicationArguments.h>
 
+#include <bl2d/common/util/Exception.h>
+
 #include <i.bl2d.platform/ISystemPlatform.h>
 
 namespace bl2d
@@ -18,10 +20,13 @@ namespace bl2d
     {
         public:
             using IMainApplicationArguments = ::bl2d::IMainApplicationArguments;
+            using Exception = ::bl2d::util::Exception;
 
         public:
             MainApplication();
             virtual ~MainApplication();
+
+            int RunSafe(const IMainApplicationArguments& args);
 
             virtual int Run(const IMainApplicationArguments& args);
 
@@ -58,18 +63,29 @@ namespace bl2d
             virtual void OnUnload() {};
 
             /*!
+             * @brief Exception callback
+             * @param ex Exceptions code
+            */
+            virtual void OnException(const Exception& ex);
+
+            /*!
              * @brief Retrive the IoC stack for the application
              * @return L0 IoC-Stakc (Application Level)
             */
             inline IoCStack& GetIoC() { return ioc; }
 
+            inline bool IsInitialized() const { return m_isInitialized; }
+
         protected:
             IoCStack ioc;
 
         private:
+            bool m_isInitialized = false;
+
+        private:
             /*!
-                 * @brief A call to this function will load all modules and initialize msys and ioc
-                */
+             * @brief A call to this function will load all modules and initialize msys and ioc
+            */
             void Init();
 
             /*!

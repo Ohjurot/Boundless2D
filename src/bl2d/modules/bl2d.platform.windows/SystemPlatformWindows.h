@@ -1,13 +1,16 @@
 #pragma once
 
+#include <i.bl2d.platform/ISystemPlatform.h>
+
 #include <bl2d/common/boot/os.h>
 #include <bl2d/common/ioc/IoCStack.h>
 #include <bl2d/common/util/string/StringConverter.h>
 
-#include <i.bl2d.platform/ISystemPlatform.h>
+#include <bl2d.platform.windows/auxiliary/system/WbemSystemAdapter.h>
 
 #include <string>
 #include <sstream>
+#include <memory>
 #include <string_view>
 
 namespace bl2d::platform
@@ -23,10 +26,6 @@ namespace bl2d::platform
             const PlatformInfo& GetInfo() const override;
 
         private:
-            void ConnectToWbem();
-            void DisconnectFromWbem();
-            bool QueryWbem(std::wstring_view className, std::wstring_view valueName, VARIANT& value);
-
             void QueryWMIInformations();
 
         private:
@@ -34,7 +33,6 @@ namespace bl2d::platform
             std::string m_winName;
             std::string m_winVersion;
 
-            ComPointer<IWbemLocator> m_wbemLocator;
-            ComPointer<IWbemServices> m_wbemService;
+            std::unique_ptr<windows::WbemSystemAdapter> m_wbem;
     };
 }

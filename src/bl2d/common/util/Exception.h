@@ -12,17 +12,48 @@
 #include <stdexcept>
 #include <string_view>
 
-#define BL2D_BUILD_EXCEPTION(what) ::bl2d::util::ExceptionBuilder().What(what).Where(__FUNCTION__, __LINE__)
+#define BL2D_BUILD_EXCEPTION_RAW(what) \
+    ::bl2d::util::ExceptionBuilder().What(what).Where(__FUNCTION__, __LINE__)
+#define BL2D_BUILD_EXCEPTION(what) \
+    BL2D_BUILD_EXCEPTION_RAW(what).NewLine()
 
 namespace bl2d::util
 {
+    /*!
+     * @brief Class for handling exceptions
+    */
     class Exception : public std::runtime_error
     {
         public:
             using std::runtime_error::runtime_error;
 
+            Exception() : std::runtime_error("") {};
+
             void LogMessage(spdlog::logger& logger, spdlog::level::level_enum level = spdlog::level::critical) const;
+            std::string Striped() const;
     };
+
+    template<typename T, typename... Args, typename = std::enable_if_t<std::is_invocable_v<T, Args...>>>
+    bool ExceptionSafeCall(Exception& out, T f, Args... args)
+    {
+        try
+        {
+            f(std::forward<Args>(args)...);
+            return true;
+        }
+        catch (::bl2d::util::Exception& ex)
+        {
+            out = ex;
+            return false;
+        }
+    }
+
+    template<typename T, typename... Args, typename = std::enable_if_t<std::is_invocable_v<T, Args...>>>
+    bool ExceptionSafeCall(T f, Args... args)
+    {
+        Exception e;
+        return ExceptionSafeCall(e, f, std::forward<Args>(args)...);
+    }
 
     /*!
      * @brief Helper class for exception building
@@ -64,17 +95,23 @@ namespace bl2d::util
 
             inline ExceptionBuilder& What(std::string_view msg)
             {
-                return Format("Exception occurred: ", msg);
+                return Format("Exception occurred \"{}\"", msg);
             }
 
             inline ExceptionBuilder& What(std::wstring_view msg)
             {
-                return Format(L"Exception occurred: ", msg);
+                return Format(L"Exception occurred \"{}\"", msg);
             }
 
             inline ExceptionBuilder& Where(const char* function, int line)
             {
                 return Format("In {} (Line {})", function, line);
+            }
+
+            inline ExceptionBuilder& NewLine()
+            {
+                m_buffer << MSG_SEPERATOR;
+                return *this;
             }
 
             template<typename Formater, typename... Args>

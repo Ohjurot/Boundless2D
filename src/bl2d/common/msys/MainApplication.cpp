@@ -2,12 +2,34 @@
 
 bl2d::MainApplication::MainApplication()
 {
-    Init();
+    Exception ex;
+    if (!util::ExceptionSafeCall(ex, [&](){ Init(); }))
+    {
+        OnException(ex);
+    }
 }
 
 bl2d::MainApplication::~MainApplication()
 {
-    Shutdown();
+    if (m_isInitialized)
+    {
+        Exception ex;
+        if (!util::ExceptionSafeCall(ex, [&]() { Shutdown(); }))
+        {
+            OnException(ex);
+        }
+    }
+}
+
+int bl2d::MainApplication::RunSafe(const IMainApplicationArguments& args)
+{
+    int rc = -1;
+    Exception ex;
+    if (!util::ExceptionSafeCall(ex, [&]() { rc = Run(args); }))
+    {
+        OnException(ex);
+    }
+    return rc;
 }
 
 int bl2d::MainApplication::Run(const IMainApplicationArguments& args)
@@ -23,6 +45,13 @@ void bl2d::MainApplication::OnInit()
 void bl2d::MainApplication::OnShutdown()
 {
     ioc.Get<platform::ISystemPlatform>().Shutdown();
+}
+
+void bl2d::MainApplication::OnException(const Exception& ex)
+{
+    ex.LogMessage(*spdlog::default_logger());
+
+    // TODO: Alert the user
 }
 
 void bl2d::MainApplication::Init()
@@ -43,6 +72,8 @@ void bl2d::MainApplication::Init()
     {
         ModuleManager::Get().GetModulePtr(i)->OnInit();
     }
+
+    m_isInitialized = true;
 }
 
 void bl2d::MainApplication::Shutdown()
@@ -63,4 +94,6 @@ void bl2d::MainApplication::Shutdown()
         ModuleManager::Get().GetModulePtr(i)->OnUnload();
     }
     OnUnload();
+
+    m_isInitialized = false;
 }

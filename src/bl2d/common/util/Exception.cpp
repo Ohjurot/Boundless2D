@@ -13,10 +13,25 @@ void bl2d::util::Exception::LogMessage(spdlog::logger& logger, spdlog::level::le
 
         auto msgPart = msg.substr(0, pos);
         msg = msg.substr(pos + 1);
-        logger.log(level, msgPart);
+        if (!msgPart.empty())
+        {
+            logger.log(level, msgPart);
+        }
     }
     if (!msg.empty())
     {
         logger.log(level, msg);
     }
+}
+
+std::string bl2d::util::Exception::Striped() const
+{
+    std::string msg = what();
+    auto pos = msg.find_last_of('\n');
+    if (pos != std::string::npos)
+    {
+        msg = msg.substr(0, pos);
+    }
+
+    return msg;
 }
