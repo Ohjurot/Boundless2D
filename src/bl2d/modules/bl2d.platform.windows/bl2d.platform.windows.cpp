@@ -2,6 +2,7 @@
 
 // === Put implementation includes here ===
 #include <bl2d.platform.windows/SystemPlatformWindows.h>
+#include <bl2d.platform.windows/ThreadFactoryWindows.h>
 
 
 const bl2d::ModuleDescription& bl2d::modules::bl2d_platform_windows::GetDesc() const
@@ -18,4 +19,5 @@ void bl2d::modules::bl2d_platform_windows::Register(IoCRegistrations& registrar)
 {
     // === Put implementation registers here ===
     registrar.Register<platform::ISystemPlatform, platform::SystemPlatformWindows>();
+    registrar.Register<platform::IThreadFactory, platform::ThreadFactoryWindows>();
 }

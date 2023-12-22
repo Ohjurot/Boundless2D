@@ -30,6 +30,8 @@ namespace bl2d::platform
 
     /*!
      * @brief Interface for platforms
+     * 
+     * TO BE RETRIVED VIA IOC
     */
     class ISystemPlatform
     {
